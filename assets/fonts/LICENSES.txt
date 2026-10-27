@@ -1,0 +1,2 @@
+Atkinson Hyperlegible (Braille Institute), Courier Prime (Alan Dague-Greene), Archivo Narrow (Omnibus-Type).
+Todas bajo SIL Open Font License 1.1, obtenidas de los paquetes npm @fontsource/* 5.3.0.

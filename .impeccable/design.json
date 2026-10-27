@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-26T23:30:00-05:00",
+  "title": "Design System: Guías locales (Fichero)",
+  "extensions": {
+    "colorMeta": {
+      "rojo-renglon": { "role": "primary", "displayName": "Rojo renglón", "canonical": "#b5412c" },
+      "laton": { "role": "secondary", "displayName": "Latón", "canonical": "#c19a4b" },
+      "carton": { "role": "neutral", "displayName": "Cartulina", "canonical": "#f1ece0" },
+      "madera-bmad": { "role": "neutral", "displayName": "Madera verde tinta", "canonical": "#1d2a24" },
+      "madera-git": { "role": "neutral", "displayName": "Madera tierra roja", "canonical": "#2d1c17" }
+    },
+    "typographyMeta": {
+      "rotulo": { "displayName": "Rótulo", "purpose": "Título del cajón en el portaetiquetas." },
+      "signatura": { "displayName": "Signatura", "purpose": "Código de la ficha, tecleado." },
+      "body": { "displayName": "Cuerpo", "purpose": "Descripciones y lectura." }
+    },
+    "shadows": [
+      { "name": "ficha", "value": "0 1px 0 rgba(0,0,0,.25),0 8px 18px -6px rgba(0,0,0,.45)", "purpose": "Ficha y hoja apoyadas en la madera." },
+      { "name": "frente", "value": "0 10px 18px -14px #000", "purpose": "Frente del cajón sticky." },
+      { "name": "perforacion", "value": "inset 0 1px 2px #000a", "purpose": "Agujero de la varilla." }
+    ],
+    "motion": [
+      { "name": "curva", "value": "cubic-bezier(.16,1,.3,1)", "purpose": "Sacar el cajón (300ms) y mover pestañas (180ms)." }
+    ],
+    "breakpoints": [ { "name": "movil", "value": "860px" } ]
+  },
+  "components": [
+    {
+      "name": "Ficha", "kind": "card", "refersTo": "ficha",
+      "description": "Una skill, comando o paso con su signatura, comando copiable y enlaces.",
+      "html": "<article class=\"ds-ficha\"><header><b>CP</b> <span>Método · requerida</span></header><h3>PRD</h3><p>Crea, edita o valida el PRD.</p><div class=\"ds-cmd\"><code>/bmad-prd</code><button>Copiar</button></div><i></i></article>",
+      "css": ".ds-ficha{position:relative;max-width:320px;padding:12px 18px 26px;background:#f1ece0;color:#1d1e1b;border-radius:3px;box-shadow:0 1px 0 rgba(0,0,0,.25),0 8px 18px -6px rgba(0,0,0,.45);font:16px/1.5 Atkinson,system-ui,sans-serif}.ds-ficha header{margin:0 -18px;padding:2px 18px 10px;border-bottom:1.5px solid #b5412c;font:13px 'Courier Prime',monospace;color:#6e695d}.ds-ficha header b{font-size:19px;color:#1d1e1b}.ds-ficha h3{margin:8px 0 0;font-size:18px}.ds-ficha p{margin:4px 0;color:#4a473f;font-size:15px}.ds-cmd{display:flex;gap:8px;padding:7px 8px;background:#fffdf6;border:1px solid #d6cdb8;border-radius:2px}.ds-cmd code{flex:1;font:15px 'Courier Prime',monospace}.ds-cmd button{background:#1d1e1b;color:#f1ece0;border:0;border-radius:2px;font:600 13px 'Archivo Narrow',sans-serif;text-transform:uppercase;letter-spacing:.06em}.ds-ficha i{position:absolute;left:50%;bottom:8px;width:11px;height:11px;margin-left:-5.5px;border-radius:50%;background:#1d2a24}"
+    }
+  ],
+  "narrative": {
+    "northStar": "El fichero de biblioteca",
+    "overview": "Marco de madera oscura (verde tinta en BMAD, tierra roja en Git) con guías de división de color como navegación y portaetiquetas de latón; dentro, fichas de cartulina con signatura mecanografiada, renglón rojo y perforación. El mundo vive en el marco y la cabecera de ficha; la lectura queda calmada.",
+    "keyCharacteristics": ["Estado por forma: sólida, esquina doblada, tachada", "Banderita en la última ficha usada", "Placeholders rellenables en vivo", "Autocontenido y offline"],
+    "rules": [
+      { "name": "La regla del renglón", "body": "El rojo pertenece a la ficha; nunca como fondo de áreas grandes.", "section": "colors" },
+      { "name": "La regla de la tinta plena en las guías", "body": "Sobre pestañas de color el texto es siempre tinta plena.", "section": "colors" },
+      { "name": "La regla de la máquina de escribir", "body": "Courier Prime solo para signaturas, comandos, código y metadatos.", "section": "typography" }
+    ]
+  }
+}

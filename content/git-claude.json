@@ -1,0 +1,35 @@
+{
+  "_nota": "Fichas del cajón 'Git con Claude'. cmd es lo que copias y pegas en Claude Code.",
+  "grupos": [
+    {
+      "label": "Antes de commitear",
+      "fichas": [
+        { "call": "review", "title": "Buscar bugs en tus cambios", "desc": "Revisa el diff actual buscando errores reales. Sube el nivel (low → max) para revisiones más profundas.", "cmd": "/code-review high" },
+        { "call": "fix", "title": "Revisar y corregir de una vez", "desc": "Igual que la anterior, pero aplica las correcciones al working tree para que las revises con git diff.", "cmd": "/code-review high --fix" },
+        { "call": "simplify", "title": "Limpiar lo que cambiaste", "desc": "Busca duplicación y código innecesario solo en tus cambios. No cambia comportamiento.", "cmd": "/simplify" },
+        { "call": "security", "title": "Revisión de seguridad de la rama", "desc": "Analiza los cambios pendientes de la rama buscando vulnerabilidades (secretos, inyecciones, permisos).", "cmd": "/security-review" },
+        { "call": "walk", "title": "Que te explique el cambio", "desc": "Recorrido guiado: para qué es el cambio, qué mirar con atención y cómo probarlo. Útil antes de aprobar un PR.", "cmd": "/bmad-walkthrough" }
+      ]
+    },
+    {
+      "label": "Commits, ramas y PRs",
+      "fichas": [
+        { "call": "commit", "title": "Commit con mensaje convencional", "desc": "Claude revisa git status y el diff, agrupa los cambios y redacta el mensaje. Pídele que no haga push si solo quieres el commit local.", "cmd": "Haz commit de los cambios con un mensaje convencional en español, sin push" },
+        { "call": "split", "title": "Separar en varios commits", "desc": "Cuando mezclaste varias cosas, Claude propone commits atómicos y los crea en orden.", "cmd": "Separa los cambios actuales en commits atómicos y muéstrame el plan antes de crearlos" },
+        { "call": "branch", "title": "Rama nueva desde la base actualizada", "desc": "Hace fetch, actualiza la base y crea la rama con el nombre que indiques.", "cmd": "Actualiza <rama-base> y crea la rama <mi-rama> desde ella" },
+        { "call": "pr", "title": "Crear un pull request", "desc": "Usa gh (ya instalado) para abrir el PR con título, resumen y plan de pruebas a partir de los commits.", "cmd": "Crea un PR de <mi-rama> hacia <rama-base> con resumen y plan de pruebas" },
+        { "call": "-w", "title": "Trabajar en paralelo con un worktree", "desc": "Abre Claude en un worktree nuevo: otra carpeta con su propia rama, sin tocar tu working tree actual.", "cmd": "claude --worktree <mi-rama>" },
+        { "call": "--from-pr", "title": "Retomar la sesión de un PR", "desc": "Vuelve a la conversación vinculada a un PR por número o URL.", "cmd": "claude --from-pr 42" }
+      ]
+    },
+    {
+      "label": "Cuando algo sale mal",
+      "fichas": [
+        { "call": "conflict", "title": "Resolver conflictos de merge", "desc": "Claude lee ambos lados, explica cada decisión y deja los archivos listos para que confirmes.", "cmd": "Resuelve los conflictos del merge con <rama-base> y explícame cada decisión antes de continuar" },
+        { "call": "undo", "title": "Deshacer sin perder trabajo", "desc": "Describe lo que pasó; Claude elige entre restore, revert, reset o reflog y te avisa si algo es irreversible.", "cmd": "Hice un commit en la rama equivocada, muévelo a <mi-rama> sin perder nada" },
+        { "call": "why", "title": "Por qué cambió este código", "desc": "Combina git log, blame y el diff de cada commit para contarte la historia de una función o archivo.", "cmd": "¿Por qué y cuándo cambió <archivo>? Usa git log y blame" },
+        { "call": "!", "title": "Ejecutar git tú mismo", "desc": "Un mensaje que empieza por ! se ejecuta en la terminal y Claude ve la salida.", "cmd": "! git log --oneline -10" }
+      ]
+    }
+  ]
+}

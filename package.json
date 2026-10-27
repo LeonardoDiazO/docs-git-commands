@@ -1,0 +1,9 @@
+{
+  "name": "docs-git-commands",
+  "private": true,
+  "type": "module",
+  "description": "Guía local de Git + S3 generada desde README.md y tu configuración de git",
+  "scripts": {
+    "sync": "node scripts/sync.mjs"
+  }
+}
