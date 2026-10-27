@@ -290,7 +290,7 @@ td{font-variant-numeric:tabular-nums}
 td[data-state="warn"]{color:var(--rojo);font-weight:700}
 
 /* ---- aviso de copiado ---- */
-.aviso{position:fixed;left:50%;bottom:24px;z-index:20;padding:8px 14px;background:var(--tinta);color:var(--carton);border-radius:3px;font:600 14px "Archivo Narrow",sans-serif;letter-spacing:.06em;text-transform:uppercase;box-shadow:var(--sombra);transform:translate(-50%,12px);opacity:0;pointer-events:none;transition:opacity var(--t-rapida),transform var(--t-rapida) var(--curva)}
+.aviso{position:fixed;left:50%;bottom:24px;z-index:20;padding:8px 14px;background:var(--tinta);color:var(--carton);border-radius:3px;max-width:calc(100vw - 32px);overflow-wrap:anywhere;font:400 14px "Courier Prime",monospace;box-shadow:var(--sombra);transform:translate(-50%,12px);opacity:0;pointer-events:none;transition:opacity var(--t-rapida),transform var(--t-rapida) var(--curva)}
 .aviso.ver{opacity:1;transform:translate(-50%,0)}
 
 @media (max-width:860px){
@@ -354,7 +354,7 @@ const JS = String.raw`
 
   // Copiar: botones y cualquier fragmento de código del texto
   var avisoT;
-  function notify(msg){aviso.textContent=msg;aviso.classList.add('ver');clearTimeout(avisoT);avisoT=setTimeout(function(){aviso.classList.remove('ver')},1300)}
+  function notify(msg){aviso.innerHTML='';var k=document.createElement('strong');k.textContent='Copiado ';k.style.fontFamily='"Archivo Narrow",sans-serif';aviso.appendChild(k);aviso.appendChild(document.createTextNode(msg));aviso.classList.add('ver');clearTimeout(avisoT);avisoT=setTimeout(function(){aviso.classList.remove('ver')},1300)}
   function copy(text,done){
     text=text.replace(/ /g,' ');
     function fallback(){var t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();try{document.execCommand('copy');done()}catch(_){}t.remove()}
@@ -368,7 +368,12 @@ const JS = String.raw`
       return;
     }
     var c=e.target.closest('code.copiable');
-    if(c&&!window.getSelection().toString()) copy(c.innerText,function(){notify('Copiado: '+(c.innerText.length>40?c.innerText.slice(0,40)+'…':c.innerText))});
+    if(c&&!window.getSelection().toString()) copy(c.innerText,function(){notify(c.innerText.length>60?c.innerText.slice(0,60)+'…':c.innerText)});
+  });
+
+  document.addEventListener('keydown',function(e){
+    var c=e.target.closest&&e.target.closest('code.copiable');
+    if(c&&(e.key==='Enter'||e.key===' ')){e.preventDefault();copy(c.innerText,function(){notify(c.innerText.length>60?c.innerText.slice(0,60)+'…':c.innerText)})}
   });
 
   // Placeholders rellenables

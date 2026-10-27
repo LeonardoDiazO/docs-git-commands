@@ -33,7 +33,7 @@
       .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
       .replace(/\[([^\]]+)\]\(#([^)\s]+)\)/g, '<a href="#$2">$1</a>')
       .replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, '$1<a href="$2" target="_blank" rel="noopener">$2</a>')
-      .replace(/@@(\d+)@@/g, (_, i) => `<code class="copiable" title="Clic para copiar">${phText(codes[+i])}</code>`);
+      .replace(/@@(\d+)@@/g, (_, i) => `<code class="copiable" tabindex="0" role="button" title="Clic o Enter para copiar">${phText(codes[+i])}</code>`);
   }
 
   // ```ruta Título  →  pasos "comando | explicación", numerados y copiables.

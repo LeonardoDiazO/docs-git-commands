@@ -166,7 +166,7 @@ Ocre #d6b162, verde #8fb39a, azul #8fa9c4, salmón #e3957a, lila #b9a3c4, gris #
 - **Aviso** (#e58a74 / #efb3a3): rombo y texto de "hay versión nueva" en la banda de estado, sobre la madera.
 
 ### Named Rules
-**La regla del renglón.** El rojo pertenece a la ficha (renglón, estado, placeholder, bandera). Nunca como fondo de áreas grandes ni en el marco.
+**La regla del renglón.** El rojo pertenece a la ficha (renglón, estado, placeholder, bandera, sello). En el marco solo aparece para una cosa: avisar que hay versión nueva (rombo y texto de la banda de estado, contador "N nuevas" de la pestaña Novedades). Nunca como fondo de áreas grandes.
 
 **La regla de la tinta plena en las guías.** Sobre las pestañas de color el texto es siempre `tinta`; los grises de tinta no alcanzan contraste sobre ellas.
 
