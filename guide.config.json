@@ -1,0 +1,36 @@
+{
+  "_nota": "Cualquier campo puede variar por sistema con las claves win32 (Windows), darwin (macOS), linux y default.",
+  "novedades": [
+    {
+      "id": "git", "take": 3,
+      "label": { "win32": "Git para Windows", "default": "Git" },
+      "source": {
+        "win32": { "kind": "gh-releases", "url": "https://api.github.com/repos/git-for-windows/git/releases?per_page=6", "cut": "^Filename [|] SHA-256" },
+        "default": { "kind": "gh-tags", "url": "https://api.github.com/repos/git/git/tags?per_page=30", "notes": "https://github.com/git/git/blob/master/Documentation/RelNotes/{v}.adoc", "link": "https://git-scm.com/downloads" }
+      },
+      "update": {
+        "win32": { "cmd": "git update-git-for-windows", "note": "Ejecútalo en Git Bash o PowerShell; descarga e instala la última versión." },
+        "darwin": { "cmd": "brew upgrade git", "note": "Con Homebrew. La versión de Apple (Xcode) se actualiza con las herramientas de línea de comandos." },
+        "linux": { "cmd": "sudo apt update && sudo apt install --only-upgrade git", "note": "Debian/Ubuntu. En Fedora: `sudo dnf upgrade git`; en Arch: `sudo pacman -S git`.", "link": "https://git-scm.com/download/linux", "linkLabel": "Otras distribuciones" }
+      }
+    },
+    {
+      "id": "gh", "label": "GitHub CLI", "take": 3,
+      "source": { "kind": "gh-releases", "url": "https://api.github.com/repos/cli/cli/releases?per_page=6", "cut": "^[*][*]Full Changelog" },
+      "update": {
+        "win32": { "link": "https://github.com/cli/cli/releases/latest", "linkLabel": "Descargar el instalador .msi" },
+        "darwin": { "cmd": "brew upgrade gh" },
+        "linux": { "cmd": "sudo apt update && sudo apt install --only-upgrade gh", "note": "Si lo instalaste desde el repositorio oficial de GitHub CLI.", "link": "https://github.com/cli/cli/blob/trunk/docs/install_linux.md", "linkLabel": "Instalación en Linux" }
+      }
+    },
+    {
+      "id": "aws", "label": "AWS CLI", "take": 2,
+      "source": { "kind": "rst-changelog", "url": "https://raw.githubusercontent.com/aws/aws-cli/v2/CHANGELOG.rst", "link": "https://github.com/aws/aws-cli/blob/v2/CHANGELOG.rst" },
+      "update": {
+        "win32": { "cmd": "msiexec.exe /i https://awscli.amazonaws.com/AWSCLIV2.msi" },
+        "darwin": { "cmd": "curl \"https://awscli.amazonaws.com/AWSCLIV2.pkg\" -o AWSCLIV2.pkg && sudo installer -pkg AWSCLIV2.pkg -target /" },
+        "linux": { "cmd": "curl \"https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip\" -o awscliv2.zip && unzip -o awscliv2.zip && sudo ./aws/install --update", "note": "Para ARM usa `awscli-exe-linux-aarch64.zip`." }
+      }
+    }
+  ]
+}

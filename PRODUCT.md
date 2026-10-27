@@ -29,7 +29,8 @@ No es documentación genérica: refleja **la instalación real de esta máquina*
 
 ## Operating Context
 
-- Se abre desde el explorador de archivos o el navegador, en local, en Windows 11.
+- Se abre desde el explorador de archivos o el navegador, en local. El usuario trabaja en Windows 11, pero las guías deben funcionar igual en macOS y Linux: el sync detecta el sistema y elige los comandos de actualización correspondientes.
+- Las novedades (versiones y changelogs de BMAD, Claude Code, Git, GitHub CLI y AWS CLI) se consultan en vivo al abrir la página, con caché de 1 hora y copia de respaldo del último sync.
 - Se actualiza con `npm run sync` (lee `_bmad/_config`, `~/.claude/skills`, `~/.claude/agents`, plugins instalados, `npm view bmad-method version`, `git --version`) y avisa si hay una versión nueva de BMAD.
 - Idioma: español.
 

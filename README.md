@@ -1,4 +1,34 @@
-# Git & AWS S3 — Guía de referencia técnica completa
+# Guía Git + S3
+
+> **Abre `index.html`** (doble clic): buscador, copiar con un clic, valores rellenables y novedades en vivo. Este README lo genera `npm run sync` (26 de octubre de 2026); para cambiar comandos edita `content/comandos.md`.
+
+## Novedades
+
+| Herramienta | Tuya | Última | Estado |
+|---|---|---|---|
+| Git para Windows | 2.51.0.windows.1 | 2.56.0.windows.4 | **actualizar** |
+| GitHub CLI | 2.92.0 | 2.103.3 | **actualizar** |
+| AWS CLI | 2.27.51 | 2.38.6 | **actualizar** |
+
+## Cómo se mantiene al día
+
+- **Novedades** (Git para Windows, GitHub CLI, AWS CLI): la página las consulta en vivo al abrirse, como mucho una vez por hora. Sin internet muestra la copia de la última sincronización.
+- **Lo instalado** (versiones y `git config --global`): se lee al ejecutar `npm run sync`, o desde `guias/` con `actualizar-guias.cmd` (Windows) o `./actualizar-guias.sh` (macOS/Linux). Los comandos de actualización se eligen para el sistema donde sincronizas.
+
+## Estructura
+
+| Ruta | Qué es | ¿Se edita? |
+|---|---|---|
+| `content/comandos.md` | Tu referencia de Git y S3: cada `## N.` es un cajón y cada `###` una ficha | Sí |
+| `content/git-claude.json` | Frases para pedirle a Claude tareas de git | Sí |
+| `guide.config.json` | Fuentes de novedades y comandos de actualización | Sí |
+| `scripts/sync.mjs` | Lee contenido, configuración y versiones; genera `index.html` y este README | Al cambiar qué se lee |
+| `scripts/lib/` | Motor compartido con `docs-bmad-method` (idéntico en ambos repos) | Copiar al otro repo si cambia |
+| `assets/fonts/` | Tipografías OFL incrustadas en la página | No |
+| `index.html`, `README.md` | Generados | No |
+| `PRODUCT.md`, `DESIGN.md`, `.impeccable/` | Contexto de producto y sistema visual (skill impeccable) | Al rediseñar |
+
+---
 
 > **Documentación oficial:** https://www.atlassian.com/es/git/tutorials/setting-up-a-repository/git-clone
 

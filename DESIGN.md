@@ -20,6 +20,14 @@ colors:
   sobre-madera: "#e9e2d0"
   sobre-madera-2: "#b9b4a2"
   ok: "#3f7d5e"
+  aviso: "#e58a74"
+  aviso-texto: "#efb3a3"
+  papel: "#fffdf6"
+  filete: "#d6cdb8"
+  pliegue: "#cfc6b1"
+  faltante: "#d9d3c3"
+  brillo: "#ffffff88"
+  junta: "#00000033"
   guia-ocre: "#d6b162"
   guia-verde: "#8fb39a"
   guia-azul: "#8fa9c4"
@@ -28,13 +36,13 @@ colors:
   guia-gris: "#b5b0a3"
 typography:
   rotulo:
-    fontFamily: "Archivo Narrow, sans-serif"
+    fontFamily: '"Archivo Narrow",sans-serif'
     fontSize: "20px"
     fontWeight: 700
     lineHeight: 1.1
     letterSpacing: "0.08em"
   titulo-hoja:
-    fontFamily: "Archivo Narrow, sans-serif"
+    fontFamily: '"Archivo Narrow",sans-serif'
     fontSize: "24px"
     fontWeight: 700
     lineHeight: 1.2
@@ -54,23 +62,34 @@ typography:
     fontWeight: 400
     lineHeight: 1.6
   signatura:
-    fontFamily: "Courier Prime, ui-monospace, monospace"
+    fontFamily: '"Courier Prime",monospace'
     fontSize: "19px"
     fontWeight: 700
     lineHeight: 1
     letterSpacing: "0.04em"
   codigo:
-    fontFamily: "Courier Prime, ui-monospace, monospace"
+    fontFamily: '"Courier Prime",monospace'
     fontSize: "15px"
     fontWeight: 400
   etiqueta:
-    fontFamily: "Archivo Narrow, sans-serif"
+    fontFamily: '"Archivo Narrow",sans-serif'
     fontSize: "14px"
     fontWeight: 700
     letterSpacing: "0.14em"
+  meta:
+    fontFamily: '"Courier Prime",monospace'
+    fontSize: "13px"
+    fontWeight: 400
+  sello:
+    fontFamily: '"Archivo Narrow",sans-serif'
+    fontSize: "12px"
+    fontWeight: 700
+    letterSpacing: "0.12em"
 rounded:
   ficha: "3px"
   control: "2px"
+  sello: "2px"
+  perforacion: "50%"
 spacing:
   gap-fichas: "18px"
   ficha-x: "18px"
@@ -143,6 +162,9 @@ Madera oscura como marco, cartulina como superficie de lectura, rojo de renglón
 ### Guías de división
 Ocre #d6b162, verde #8fb39a, azul #8fa9c4, salmón #e3957a, lila #b9a3c4, gris #b5b0a3. Solo como fondo de las pestañas del riel, con texto en tinta plena (contraste ≥ 4.5:1).
 
+- **Papel** (#fffdf6) y **filete** (#d6cdb8): fondo y borde de las cajas de comando y código, y de las notas. **Pliegue** (#cfc6b1): el triángulo de la esquina doblada.
+- **Aviso** (#e58a74 / #efb3a3): rombo y texto de "hay versión nueva" en la banda de estado, sobre la madera.
+
 ### Named Rules
 **La regla del renglón.** El rojo pertenece a la ficha (renglón, estado, placeholder, bandera). Nunca como fondo de áreas grandes ni en el marco.
 
@@ -164,6 +186,8 @@ Ocre #d6b162, verde #8fb39a, azul #8fa9c4, salmón #e3957a, lila #b9a3c4, gris #
 - **Signatura** (Courier Prime 700, 19px; 16px si pasa de 11 caracteres).
 - **Código y comandos** (Courier Prime 400, 14-15px).
 - **Etiqueta de grupo** (Archivo Narrow 700, 14px, mayúsculas, +0.14em, latón).
+- **Meta** (Courier Prime 400, 13px): subtítulo de ficha, contadores, clave/valor.
+- **Sello** (Archivo Narrow 700, 12px, mayúsculas, +0.12em): sellos "Nueva", "Tu versión", "Actualizar".
 
 ### Named Rules
 **La regla de la máquina de escribir.** Courier Prime solo para signaturas, comandos, código, placeholders y metadatos clave/valor. Nunca en párrafos ni títulos.
@@ -195,10 +219,16 @@ Esquinas casi rectas como el papel real: 3px en fichas, hoja, buscador y pestañ
 - **Guía del riel**: pestaña de color con nombre y número de fichas; la activa llega al borde del marco; la banderita marca el cajón de la última ficha usada.
 - **Portaetiquetas**: marco latón de 4px con línea interior clara y etiqueta de cartulina.
 - **Banda de estado**: puntos llenos latón = ok; rombo salmón = aviso; incluye "Sincronizada" y aviso de antigüedad tras 7 días.
+- **Sello de fechador**: rectángulo de borde 1.5px en tinta roja girado −3° ("Nueva", "Actualizar") o verde girado 2° ("Tu versión"), como el sello de devolución de una ficha de préstamo.
+- **Ficha de resumen** (Novedades → Tu equipo): herramienta, "Tuya / Última" en Courier 18px, veredicto, y el comando o enlace de actualización para el sistema donde se sincronizó.
+- **Ficha de versión**: signatura = número de versión; notas de la fuente con encabezados desde h3; las de más de 14 líneas se pliegan en "Ver notas completas"; las anteriores a la tuya van en cartulina gastada.
+- **Ruta**: pasos numerados en círculo rojo unidos por un filete vertical; cada paso es una caja de comando copiable más una línea de explicación.
+- **Código copiable**: todo `code` del texto se copia con un clic (cursor de copia, fondo latón al pasar) y muestra el aviso "Copiado" abajo al centro.
 - **Buscador**: cartulina, icono lupa, atajo `/`, Esc limpia. Los resultados son copias de las fichas en un cajón temporal.
 
 ## Do's and Don'ts
 
+- **Do** dar las variantes por sistema (win32, darwin, linux) en `guide.config.json`; la página muestra la del sistema donde se sincronizó.
 - **Do** generar desde datos: si algo puede leerse de la máquina, va en `sync.mjs`, no a mano.
 - **Do** mantener la columna de lectura calmada: el mundo vive en el marco, la cabecera de ficha y la forma de los estados.
 - **Do** copiar `scripts/fichero.mjs` al otro repo cuando lo cambies; el motor es el mismo.
