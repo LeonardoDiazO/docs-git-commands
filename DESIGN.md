@@ -224,11 +224,12 @@ Esquinas casi rectas como el papel real: 3px en fichas, hoja, buscador y pestañ
 - **Ficha de versión**: signatura = número de versión; notas de la fuente con encabezados desde h3; las de más de 14 líneas se pliegan en "Ver notas completas"; las anteriores a la tuya van en cartulina gastada.
 - **Ruta**: pasos numerados en círculo rojo unidos por un filete vertical; cada paso es una caja de comando copiable más una línea de explicación.
 - **Código copiable**: todo `code` del texto se copia con un clic (cursor de copia, fondo latón al pasar) y muestra el aviso "Copiado" abajo al centro.
+- **Selector de sistema**: primer elemento de la banda de estado; `select` sobre madera con chevron latón, seguido de "detectado" o "elegido a mano". Lo elegido a mano se recuerda.
 - **Buscador**: cartulina, icono lupa, atajo `/`, Esc limpia. Los resultados son copias de las fichas en un cajón temporal.
 
 ## Do's and Don'ts
 
-- **Do** dar las variantes por sistema (win32, darwin, linux) en `guide.config.json`; la página muestra la del sistema donde se sincronizó.
+- **Do** dar las variantes por sistema (win32, darwin, linux) en `guide.config.json`. La página detecta el sistema de quien la mira (`html[data-os]`) y oculta las fichas `data-solo-os` de otros sistemas; lo instalado solo se muestra si coincide con el sistema donde se sincronizó.
 - **Do** generar desde datos: si algo puede leerse de la máquina, va en `sync.mjs`, no a mano.
 - **Do** mantener la columna de lectura calmada: el mundo vive en el marco, la cabecera de ficha y la forma de los estados.
 - **Do** copiar `scripts/fichero.mjs` al otro repo cuando lo cambies; el motor es el mismo.

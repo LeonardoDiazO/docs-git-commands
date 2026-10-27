@@ -13,7 +13,7 @@
 ## Cómo se mantiene al día
 
 - **Novedades** (Git para Windows, GitHub CLI, AWS CLI): la página las consulta en vivo al abrirse, como mucho una vez por hora. Sin internet muestra la copia de la última sincronización.
-- **Lo instalado** (versiones y `git config --global`): se lee al ejecutar `npm run sync`, o desde `guias/` con `actualizar-guias.cmd` (Windows) o `./actualizar-guias.sh` (macOS/Linux). Los comandos de actualización se eligen para el sistema donde sincronizas.
+- **Lo instalado** (versiones y `git config --global`): se lee al ejecutar `npm run sync`, o desde `guias/` con `actualizar-guias.cmd` (Windows) o `./actualizar-guias.sh` (macOS/Linux). La página detecta el sistema de quien la abre (Windows, macOS o Linux) y muestra sus comandos; se puede cambiar a mano en la barra superior.
 
 ## Estructura
 

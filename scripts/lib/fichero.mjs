@@ -24,7 +24,7 @@ function card(c, drawer) {
   const meta = (c.meta || []).filter(m => m[1]).map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('');
   const cmd = c.cmd ? `<div class="comando"><code>${phText(c.cmd)}</code>${copyBtn()}</div>` : '';
   const search = [c.call, c.title, c.desc, c.cmd, c.search, drawer.label].join(' ').toLowerCase();
-  return `<article class="ficha" id="${esc(c.id)}" data-state="${state}" data-drawer="${drawer.id}" data-search="${esc(search)}" tabindex="-1">
+  return `<article class="ficha" id="${esc(c.id)}" data-state="${state}" data-drawer="${drawer.id}"${c.os ? ` data-solo-os="${esc(c.os)}"` : ''} data-search="${esc(search)}" tabindex="-1">
   <header><span class="signatura${(c.call || '').length > 11 ? ' larga' : ''}">${esc(c.call || '')}</span><span class="sub">${esc(c.sub || '')}</span><span class="bandera" title="Aquí te quedaste">${ICON.flag}</span></header>
   <h3>${esc(c.title)}</h3>
   ${c.desc ? `<p class="desc">${globalThis.Marcado.inline(c.desc)}</p>` : ''}${stateNote}
@@ -40,7 +40,7 @@ function drawerHtml(d, page) {
   if (d.type === 'sheet') return `<section class="cajon" id="cajon-${d.id}" data-id="${d.id}" hidden><div class="hoja">${d.html}</div></section>`;
   if (d.type === 'novedades') {
     const n = page.novedades;
-    return `<section class="cajon" id="cajon-${d.id}" data-id="${d.id}" hidden><div class="novedades-cuerpo">${globalThis.Novedades.render(n.tools, n.snapshot.data, { fetchedAt: n.snapshot.fetchedAt, live: false })}</div></section>`;
+    return `<section class="cajon" id="cajon-${d.id}" data-id="${d.id}" hidden><div class="novedades-cuerpo">${globalThis.Novedades.render(globalThis.Novedades.toolsFor(n, n.syncOs), n.snapshot.data, { fetchedAt: n.snapshot.fetchedAt, live: false })}</div></section>`;
   }
   const groups = d.groups || [{ cards: d.cards || [] }];
   const body = groups.map(g => `${g.label ? `<h2 class="grupo">${esc(g.label)}</h2>` : ''}<div class="fichas">${g.cards.map(c => card(c, d)).join('')}</div>`).join('');
@@ -70,10 +70,14 @@ export function render(page) {
   const ph = page.placeholders?.length ? `<details class="rellenar"><summary>Tus valores</summary><p>Se sustituyen en todos los comandos y frases.</p>${page.placeholders
     .map(p => `<label><span>&lt;${esc(p.token)}&gt;</span><input data-fill="${esc(p.token)}" placeholder="${esc(p.example || '')}" spellcheck="false" autocomplete="off"></label>`).join('')}<button type="button" class="limpiar">Borrar valores</button></details>` : '';
 
-  const nov = page.novedades ? { tools: page.novedades.tools, snapshot: page.novedades.snapshot } : null;
+  // Novedades: configuración completa (con variantes por sistema) + lo instalado en el sistema donde se sincronizó.
+  const nov = page.novedades || null;
+  const syncOs = page.syncOs || 'win32';
+  const osPicker = `<li class="sistema" data-state="info"><label><span class="k">Sistema</span><select id="sistema" aria-label="Sistema operativo para los comandos">${
+    Object.entries(globalThis.Novedades.OS_NAME).map(([k, v]) => `<option value="${k}"${k === syncOs ? ' selected' : ''}>${v}</option>`).join('')}</select></label><span class="h"></span></li>`;
 
   return `<!doctype html>
-<html lang="es" data-edicion="${page.edition}">
+<html lang="es" data-edicion="${page.edition}" data-os="${syncOs}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -95,7 +99,7 @@ ${CSS}
   <main>
     <header class="frente">
       <div class="portaetiqueta"><h1 id="titulo-cajon">${esc(page.drawers[0].label)}</h1></div>
-      <ul class="estado-barra" aria-label="Estado">${status}<li data-state="info" class="antiguedad" hidden><span class="k">Inventario</span><span class="v"></span><span class="h">Ejecuta ${esc(page.syncCmd)}</span></li></ul>
+      <ul class="estado-barra" aria-label="Estado">${osPicker}${status}<li data-state="info" class="antiguedad" hidden><span class="k">Inventario</span><span class="v"></span><span class="h">Ejecuta ${esc(page.syncCmd)}</span></li></ul>
       <label class="buscador">${ICON.search}<input type="search" id="buscar" placeholder="${esc(page.searchHint)}" data-corto="${esc(page.searchHintShort || page.searchHint)}" autocomplete="off" spellcheck="false"><kbd>/</kbd></label>
     </header>
     <div class="interior" style="--min:${page.cardMin || 310}px">
@@ -106,7 +110,7 @@ ${CSS}
 </div>
 <div class="aviso" role="status" aria-live="polite"></div>
 <script>
-window.FICHERO=${JSON.stringify({ key: page.storeKey, generatedAt: page.generatedAt, staleDays: page.staleDays || 7, first: page.drawers[0].id, novedades: nov }).replace(/</g, '\\u003c')};
+window.FICHERO=${JSON.stringify({ key: page.storeKey, generatedAt: page.generatedAt, staleDays: page.staleDays || 7, first: page.drawers[0].id, syncOs, novedades: nov }).replace(/</g, '\\u003c')};
 ${libSrc('marcado.js')}
 ${libSrc('novedades.js')}
 ${JS}
@@ -174,6 +178,13 @@ main{min-width:0}
 .estado-barra .h{color:var(--aviso-texto)}
 .estado-barra .h:empty{display:none}
 .estado-barra li[data-state="ok"] .h{color:var(--laton-claro)}
+.sistema label{display:flex;align-items:baseline;gap:6px}
+.sistema select{padding:1px 22px 1px 6px;background:var(--madera-3) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23e2c98a' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 6px center/10px;color:var(--sobre-madera);border:1px solid var(--veta);border-radius:2px;font:700 14px "Atkinson",sans-serif;appearance:none;cursor:pointer}
+.sistema select:focus-visible{outline:2px solid var(--laton-claro)}
+.sistema option{background:var(--madera-2);color:var(--sobre-madera)}
+html[data-os="win32"] [data-solo-os]:not([data-solo-os~="win32"]),
+html[data-os="darwin"] [data-solo-os]:not([data-solo-os~="darwin"]),
+html[data-os="linux"] [data-solo-os]:not([data-solo-os~="linux"]){display:none}
 .buscador{grid-column:1/-1;display:flex;align-items:center;gap:10px;padding:0 14px;background:var(--carton);color:var(--tinta);border-radius:3px;box-shadow:inset 0 1px 0 var(--brillo)}
 .buscador svg{width:18px;height:18px;flex:none;fill:none;stroke:var(--tinta-3);stroke-width:1.6}
 .buscador input{flex:1;min-width:0;padding:12px 0;background:none;border:0;outline:0;color:var(--tinta);font:400 17px "Atkinson",sans-serif;caret-color:var(--rojo)}
@@ -418,29 +429,50 @@ const JS = String.raw`
   var days=Math.floor((Date.now()-new Date(F.generatedAt).getTime())/864e5), ant=$('.antiguedad');
   if(ant&&days>=F.staleDays){ant.hidden=false;ant.dataset.state='warn';ant.querySelector('.v').textContent='hace '+days+' días'}
 
-  // Novedades en vivo: consulta las fuentes al abrir (caché 1 h) y compara con lo instalado
-  function paintNews(data,meta){
-    var N=F.novedades; if(!N) return;
-    var box=$('.novedades-cuerpo'); if(box) box.innerHTML=window.Novedades.render(N.tools,data,meta);
-    var nuevas=window.Novedades.counts(N.tools,data), tab=tabs.filter(function(t){return t.dataset.tab==='novedades'})[0];
-    if(tab){var ct=tab.querySelector('.cuenta'); ct.textContent=nuevas?nuevas+(nuevas===1?' nueva':' nuevas'):'al día'; if(nuevas) ct.setAttribute('data-nuevas',''); else ct.removeAttribute('data-nuevas')}
-    N.tools.forEach(function(t){
-      var li=$('.estado-barra [data-tool="'+t.id+'"]'), d=data[t.id]; if(!li||!d||!d.latest) return;
-      var newer=t.installed&&window.Novedades.cmp(d.latest,t.installed)>0;
+  // Sistema operativo: se detecta el de quien mira la página (o el elegido a mano) y decide qué comandos
+  // y fichas se muestran. Lo instalado solo se conoce para el sistema donde se sincronizó.
+  var NV=window.Novedades, osSel=$('#sistema'), detected=NV.detectOs(navigator), os=store('os')||detected||F.syncOs;
+  function paintStatus(tools,data){
+    tools.forEach(function(t){
+      var li=$('.estado-barra [data-tool="'+t.id+'"]'), d=data&&data[t.id]; if(!li) return;
+      li.hidden=t.unknown; if(t.unknown||!d||!d.latest) return;
+      var newer=t.installed&&NV.cmp(d.latest,t.installed)>0;
       li.dataset.state=newer?'warn':'ok'; li.querySelector('.h').textContent=newer?'última '+d.latest:'al día';
     });
+  }
+  function paintNews(tools,data,meta){
+    var box=$('.novedades-cuerpo'); if(box) box.innerHTML=NV.render(tools,data,meta);
+    var nuevas=NV.counts(tools,data), tab=tabs.filter(function(t){return t.dataset.tab==='novedades'})[0];
+    if(tab){var ct=tab.querySelector('.cuenta'); ct.textContent=nuevas?nuevas+(nuevas===1?' nueva':' nuevas'):tools[0]&&tools[0].unknown?'ver':'al día'; if(nuevas) ct.setAttribute('data-nuevas',''); else ct.removeAttribute('data-nuevas')}
+    paintStatus(tools,data);
     if(fills.length) applyFills();
   }
-  if(F.novedades){
-    paintNews(F.novedades.snapshot.data,{fetchedAt:F.novedades.snapshot.fetchedAt,live:false});
-    var cache=store('novedades');
-    if(cache&&Date.now()-new Date(cache.fetchedAt).getTime()<36e5) paintNews(cache.data,{fetchedAt:cache.fetchedAt,live:true});
-    else if(window.fetch) window.Novedades.fetchAll(F.novedades.tools,function(u,o){return fetch(u,o)}).then(function(data){
+  function loadNews(){
+    var N=F.novedades; if(!N) return;
+    var tools=NV.toolsFor(N,os), same=os===F.syncOs;
+    current=tools; // si cambias de sistema antes de que responda la consulta, se descarta la respuesta vieja
+    if(same) paintNews(tools,N.snapshot.data,{fetchedAt:N.snapshot.fetchedAt,live:false});
+    var cache=store('novedades:'+os);
+    if(cache&&Date.now()-new Date(cache.fetchedAt).getTime()<36e5){paintNews(tools,cache.data,{fetchedAt:cache.fetchedAt,live:true});return}
+    if(!same) paintNews(tools,{},{});
+    if(!window.fetch) return;
+    NV.fetchAll(tools,function(u,o){return fetch(u,o)}).then(function(data){
       var ok=Object.keys(data).some(function(k){return data[k]&&data[k].latest}); if(!ok) return;
-      Object.keys(data).forEach(function(k){if(data[k].error&&F.novedades.snapshot.data[k]) data[k]=F.novedades.snapshot.data[k]});
-      var at=new Date().toISOString(); store('novedades',{fetchedAt:at,data:data}); paintNews(data,{fetchedAt:at,live:true});
+      if(same) Object.keys(data).forEach(function(k){if(data[k].error&&N.snapshot.data[k]) data[k]=N.snapshot.data[k]});
+      var at=new Date().toISOString(); store('novedades:'+os,{fetchedAt:at,data:data});
+      if(tools===current) paintNews(tools,data,{fetchedAt:at,live:true});
     }).catch(function(){});
   }
+  var current=null;
+  function setOs(v,manual){
+    os=v; document.documentElement.dataset.os=v; if(osSel) osSel.value=v;
+    if(manual) store('os',v===detected?null:v);
+    var h=$('.sistema .h'); if(h) h.textContent=v===detected?'detectado':'elegido a mano';
+    loadNews();
+    if(q.value) search();
+  }
+  if(osSel) osSel.addEventListener('change',function(){setOs(osSel.value,true)});
+  setOs(os,false);
 
   route();
   var last=store('ficha'); if(last) flag(document.getElementById(last));

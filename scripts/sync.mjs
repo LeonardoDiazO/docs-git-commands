@@ -66,19 +66,23 @@ const RECOMMENDED = [
   ['user.name', 'Tu nombre en los commits', null],
   ['user.email', 'Tu correo en los commits', null],
   ['init.defaultBranch', 'Rama inicial de los repos nuevos', 'main'],
-  PLATFORM === 'win32'
-    ? ['core.autocrlf', 'Convierte CRLF↔LF al guardar y al sacar archivos, para no ensuciar los diffs en Windows', 'true']
-    : ['core.autocrlf', 'Convierte CRLF a LF al hacer commit (por si llega un archivo de Windows)', 'input'],
+  ['core.autocrlf', 'Convierte CRLF↔LF al guardar y al sacar archivos, para no ensuciar los diffs en Windows', 'true', 'win32'],
+  ['core.autocrlf', 'Convierte CRLF a LF al hacer commit (por si llega un archivo de Windows)', 'input', 'darwin linux'],
   ['pull.rebase', 'Qué hace git pull cuando divergen las ramas', 'false'],
   ['fetch.prune', 'Borra referencias a ramas remotas eliminadas en cada fetch', 'true'],
-  ...(PLATFORM === 'win32' ? [['core.longpaths', 'Permite rutas de más de 260 caracteres en Windows', 'true']] : []),
+  ['core.longpaths', 'Permite rutas de más de 260 caracteres en Windows', 'true', 'win32'],
 ];
-const configCards = RECOMMENDED.map(([key, desc, value]) => {
-  const cur = cfg[key];
+// Se generan las fichas de todos los sistemas; la página muestra solo las del sistema de quien la mira.
+// El valor actual solo se conoce para el sistema donde se sincronizó.
+const configCards = RECOMMENDED.map(([key, desc, value, os]) => {
+  const here = !os || os.split(' ').includes(PLATFORM);
+  const cur = here ? cfg[key] : undefined;
   const shown = key === 'user.email' && cur ? cur.replace(/^(.).*(@.*)$/, '$1…$2') : cur;
   return {
-    id: 'config-' + slug(key), call: key, sub: cur ? 'configurado' : 'sin configurar', title: shown || 'Sin valor', desc,
-    state: cur ? 'ok' : 'missing', missingNote: value ? `Sugerido: ${value}` : 'Configúralo antes de commitear',
+    id: 'config-' + slug(key) + (os ? '-' + slug(os) : ''), call: key, os,
+    sub: !here ? `sugerido para ${os.split(' ').map(o => ({ win32: 'Windows', darwin: 'macOS', linux: 'Linux' })[o]).join(' y ')}` : cur ? 'configurado' : 'sin configurar',
+    title: shown || (here ? 'Sin valor' : `Sugerido: ${value}`), desc,
+    state: cur || !here ? 'ok' : 'missing', missingNote: value ? `Sugerido: ${value}` : 'Configúralo antes de commitear',
     cmd: cur ? null : `git config --global ${key} ${value ?? '"<valor>"'}`,
   };
 });
@@ -107,7 +111,11 @@ writeFileSync(join(ROOT, 'index.html'), render({
   generatedAt: NOW.toISOString(), generatedHuman: human, syncCmd: 'npm run sync',
   searchHint: 'Buscar comando o tarea (stash, deshacer commit, cherry-pick…)', searchHintShort: 'Buscar comando o tarea', searchExample: 'stash',
   placeholders, drawers,
-  novedades: { tools, snapshot: { data: newsData, fetchedAt: NOW.toISOString() } },
+  syncOs: PLATFORM,
+  novedades: {
+    raw: cfgFile.novedades, installed: installedOf, syncOs: PLATFORM, snapshot: { data: newsData, fetchedAt: NOW.toISOString() },
+    notes: Object.fromEntries(tools.filter(t => t.note).map(t => [t.id, t.note])),
+  },
   status: [
     { label: 'Inventario', value: `${human} · ${OS_NAME}`, state: 'ok' },
     { tool: 'git', label: 'Git', value: gitVersion || 'no encontrado', state: gitVersion ? 'ok' : 'warn' },
@@ -124,7 +132,7 @@ const readme = [
   '## Novedades', '', '| Herramienta | Tuya | Última | Estado |', '|---|---|---|---|', ...newsLines, '',
   '## Cómo se mantiene al día', '',
   '- **Novedades** (Git para Windows, GitHub CLI, AWS CLI): la página las consulta en vivo al abrirse, como mucho una vez por hora. Sin internet muestra la copia de la última sincronización.',
-  '- **Lo instalado** (versiones y `git config --global`): se lee al ejecutar `npm run sync`, o desde `guias/` con `actualizar-guias.cmd` (Windows) o `./actualizar-guias.sh` (macOS/Linux). Los comandos de actualización se eligen para el sistema donde sincronizas.', '',
+  '- **Lo instalado** (versiones y `git config --global`): se lee al ejecutar `npm run sync`, o desde `guias/` con `actualizar-guias.cmd` (Windows) o `./actualizar-guias.sh` (macOS/Linux). La página detecta el sistema de quien la abre (Windows, macOS o Linux) y muestra sus comandos; se puede cambiar a mano en la barra superior.', '',
   '## Estructura', '',
   '| Ruta | Qué es | ¿Se edita? |', '|---|---|---|',
   '| `content/comandos.md` | Tu referencia de Git y S3: cada `## N.` es un cajón y cada `###` una ficha | Sí |',

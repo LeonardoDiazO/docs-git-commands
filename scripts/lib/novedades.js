@@ -94,8 +94,9 @@
     const { esc, phText, copyBtn, ICON } = root.Marcado;
     const latest = d && d.latest;
     const rel = latest ? relation(latest, tool.installed) : 'sin-dato';
-    const state = !tool.installed ? 'missing' : rel === 'anterior' || rel === 'tuya' ? 'ok' : 'nueva';
-    const verdict = !tool.installed ? 'No instalada' : !latest ? 'Sin conexión con la fuente' : rel === 'nueva' ? `Hay versión nueva: ${latest}` : 'Estás en la última versión';
+    // unknown: la página se mira en un sistema distinto al que se sincronizó, así que no se sabe qué hay instalado aquí.
+    const state = !tool.installed && !tool.unknown ? 'missing' : 'ok';
+    const verdict = tool.unknown ? `Versión instalada desconocida en ${OS_NAME[tool.os] || 'este sistema'}: ejecuta la sincronización aquí` : !tool.installed ? 'No instalada' : !latest ? 'Sin conexión con la fuente' : rel === 'nueva' ? `Hay versión nueva: ${latest}` : 'Estás en la última versión';
     const up = tool.update || {};
     const action = rel === 'nueva' || !tool.installed
       ? (up.cmd ? `<div class="comando"><code>${phText(up.cmd)}</code>${copyBtn()}</div>` : '') +
@@ -143,5 +144,26 @@
     return out;
   }
 
-  root.Novedades = { fetchAll, render, counts, cmp, resolve };
+  const OS_NAME = { win32: 'Windows', darwin: 'macOS', linux: 'Linux' };
+
+  // Herramientas listas para un sistema: variantes resueltas y versión instalada solo si ese sistema
+  // es el mismo donde se sincronizó (lo instalado es un dato de esa máquina).
+  function toolsFor(nov, os) {
+    return nov.raw.map(t => {
+      const r = resolve(t, os);
+      const same = os === nov.syncOs;
+      return { ...r, os, installed: same ? (nov.installed[t.id] || null) : null, unknown: !same, note: same && nov.notes && nov.notes[t.id] ? nov.notes[t.id] : r.note };
+    });
+  }
+
+  // Sistema de quien mira la página (solo en el navegador).
+  function detectOs(nav) {
+    const p = ((nav.userAgentData && nav.userAgentData.platform) || nav.platform || nav.userAgent || '').toLowerCase();
+    if (/win/.test(p)) return 'win32';
+    if (/mac|iphone|ipad/.test(p)) return 'darwin';
+    if (/linux|x11|cros/.test(p)) return 'linux';
+    return null;
+  }
+
+  root.Novedades = { fetchAll, render, counts, cmp, resolve, toolsFor, detectOs, OS_NAME };
 })(typeof globalThis !== 'undefined' ? globalThis : window);
